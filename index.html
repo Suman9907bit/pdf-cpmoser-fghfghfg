@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#087f8c">
+
+<title>JOS Professional Photo Studio</title>
+
+<style>
+*{box-sizing:border-box}
+
+:root{
+ --primary:#087f8c;
+ --primary2:#00a6b4;
+ --dark:#12343b;
+ --light:#f1f8f9;
+ --border:#d7e6e8;
+ --danger:#d9363e;
+}
+
+body{
+ margin:0;
+ font-family:Arial,Helvetica,sans-serif;
+ background:#edf5f6;
+ color:#18343b;
+}
+
+.topbar{
+ background:linear-gradient(135deg,#07545f,#087f8c,#00a6b4);
+ color:#fff;
+ padding:13px 16px;
+ box-shadow:0 3px 15px #0003;
+ position:sticky;
+ top:0;
+ z-index:50;
+}
+
+.top-inner{
+ max-width:1250px;
+ margin:auto;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+}
+
+.brand{
+ font-size:19px;
+ font-weight:800;
+}
+
+.brand small{
+ display:block;
+ font-size:10px;
+ opacity:.85;
+ margin-top:3px;
+}
+
+.container{
+ max-width:1250px;
+ margin:auto;
+ padding:15px;
+}
+
+.stepbar{
+ display:flex;
+ gap:7px;
+ overflow-x:auto;
+ margin-bottom:15px;
+}
+
+.step{
+ background:#fff;
+ border:1px solid var(--border);
+ padding:8px 12px;
+ border-radius:30px;
+ font-size:12px;
+ font-weight:bold;
+ white-space:nowrap;
+}
+
+.step.active{
+ background:var(--primary);
+ color:#fff;
+ border-color:var(--primary);
+}
+
+.main{
+ display:grid;
+ grid-template-columns:minmax(0,1fr) 390px;
+ gap:15px;
+}
+
+.card{
+ background:#fff;
+ border-radius:16px;
+ border:1px solid #e0ebed;
+ box-shadow:0 5px 20px #17434b12;
+ padding:15px;
+}
+
+.preview-card{
+ min-height:600px;
+}
+
+.title{
+ color:var(--primary);
+ font-weight:800;
+ font-size:16px;
+ margin-bottom:12px;
+}
+
+.canvas-area{
+ background:
+ repeating-conic-gradient(#e7e7e7 0% 25%,#fff 0% 50%)
+ 50%/20px 20px;
+ min-height:520px;
+ border-radius:13px;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ padding:15px;
+ overflow:hidden;
+ position:relative;
+}
+
+#photoCanvas{
+ max-width:100%;
+ max-height:560px;
+ width:auto;
+ height:auto;
+ box-shadow:0 5px 20px #0004;
+ touch-action:none;
+}
+
+.canvas-hint{
+ position:absolute;
+ bottom:10px;
+ left:50%;
+ transform:translateX(-50%);
+ background:#0009;
+ color:#fff;
+ border-radius:20px;
+ padding:6px 12px;
+ font-size:11px;
+ pointer-events:none;
+}
+
+.controls{
+ display:flex;
+ flex-direction:column;
+ gap:10px;
+}
+
+.group{
+ border:1px solid var(--border);
+ border-radius:12px;
+ padding:12px;
+}
+
+.group-title{
+ color:var(--primary);
+ font-weight:800;
+ font-size:14px;
+ margin-bottom:9px;
+}
+
+.grid2{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:7px;
+}
+
+.grid3{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:7px;
+}
+
+button,
+select,
+input{
+ font-family:inherit;
+}
+
+button{
+ border:0;
+ border-radius:9px;
+ padding:10px;
+ cursor:pointer;
+ font-weight:700;
+}
+
+.btn{
+ background:#e9f4f5;
+ color:var(--dark);
+}
+
+.btn:hover{
+ background:#dceff1;
+}
+
+.primary{
+ background:var(--primary);
+ color:#fff;
+}
+
+.primary:hover{
+ background:#066d78;
+}
+
+.green{
+ background:#159b74;
+ color:#fff;
+}
+
+.red{
+ background:var(--danger);
+ color:#fff;
+}
+
+.dark{
+ background:#203e45;
+ color:#fff;
+}
+
+input[type=text],
+input[type=number],
+select{
+ width:100%;
+ border:1px solid #cddfe2;
+ border-radius:8px;
+ padding:9px;
+ outline:none;
+ background:#fff;
+}
+
+input:focus,
+select:focus{
+ border-color:var(--primary);
+ box-shadow:0 0 0 2px #087f8c18;
+}
+
+input[type=range]{
+ width:100%;
+ accent-color:var(--primary);
+}
+
+label{
+ display:block;
+ font-size:11px;
+ font-weight:bold;
+ color:#567078;
+ margin:7px 0 4px;
+}
+
+.upload-grid{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:8px;
+}
+
+.upload-grid button{
+ min-height:55px;
+}
+
+.file-hidden{
+ display:none;
+}
+
+.color-row{
+ display:flex;
+ gap:6px;
+ align-items:center;
+ flex-wrap:wrap;
+}
+
+.color{
+ width:35px;
+ height:35px;
+ border-radius:8px;
+ border:2px solid #fff;
+ box-shadow:0 0 0 1px #ccd;
+ cursor:pointer;
+}
+
+.custom-color{
+ width:45px;
+ height:35px;
+ border:0;
+ padding:0;
+}
+
+.range-line{
+ display:grid;
+ grid-template-columns:1fr 42px;
+ gap:8px;
+ align-items:center;
+}
+
+.value{
+ background:#edf5f6;
+ padding:5px;
+ border-radius:6px;
+ text-align:center;
+ font-size:11px;
+}
+
+.status{
+ padding:9px;
+ border-radius:9px;
+ background:#eef8f9;
+ color:#45636a;
+ font-size:12px;
+ line-height:1.4;
+}
+
+.sheet{
+ display:none;
+ margin-top:15px;
+}
+
+#sheetCanvas{
+ max-width:100%;
+ border:1px solid #ddd;
+ background:#fff;
+}
+
+.footer{
+ text-align:center;
+ padding:20px;
+ font-size:11px;
+ color:#71868b;
+}
+
+.modal{
+ display:none;
+ position:fixed;
+ inset:0;
+ background:#001f25aa;
+ z-index:100;
+ align-items:center;
+ justify-content:center;
+ padding:15px;
+}
+
+.modal-box{
+ background:#fff;
+ border-radius:17px;
+ width:min(480px,100%);
+ max-height:90vh;
+ overflow:auto;
+ padding:17px;
+}
+
+.modal-title{
+ color:var(--primary);
+ font-size:18px;
+ font-weight:800;
+ margin-bottom:12px;
+}
+
+@media(max-width:900px){
+ .main{
+  grid-template-columns:1fr;
+ }
+ .preview-card{
+  min-height:450px;
+ }
+ .canvas-area{
+  min-height:420px;
+ }
+}
+
+@media(max-width:500px){
+ .container{
+  padding:9px;
+ }
+ .card{
+  padding:11px;
+ }
+ .canvas-area{
+  min-height:390px;
+ }
+ .grid3{
+  grid-template-columns:1fr 1fr;
+ }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+ <div class="top-inner">
+  <div class="brand">
+   JANA ONLINE SERVICE
+   <small>Professional Photo Studio</small>
+  </div>
+  <div>📸</div>
+ </div>
+</header>
+
+<div class="container">
+
+<div class="stepbar">
+ <div class="step active">1. Photo</div>
+ <div class="step">2. Crop</div>
+ <div class="step">3. Edit</div>
+ <div class="step">4. Print</div>
+ <div class="step">5. Download</div>
+</div>
+
+<div class="main">
+
+<!-- PREVIEW -->
+
+<section class="card preview-card">
+
+ <div class="title">🖼️ Live Photo Preview</div>
+
+ <div class="canvas-area">
+
+  <canvas id="photoCanvas"></canvas>
+
+  <div class="canvas-hint">
+   Drag photo to move • Pinch/Buttons to zoom
+  </div>
+
+ </div>
+
+ <div class="status" id="status">
+  📷 Camera অথবা Gallery থেকে Photo নির্বাচন করুন।
+ </div>
+
+</section>
+
+
+<!-- CONTROLS -->
+
+<aside class="card">
+
+<div class="controls">
+
+<!-- PHOTO -->
+
+<div class="group">
+
+ <div class="group-title">📷 Photo Source</div>
+
+ <div class="upload-grid">
+
+  <button class="primary" id="cameraBtn">
+   📷 Camera
+  </button>
+
+  <button class="btn" id="galleryBtn">
+   🖼️ Gallery
+  </button>
+
+ </div>
+
+ <input
+  class="file-hidden"
+  type="file"
+  id="cameraInput"
+  accept="image/*"
+  capture="environment"
+ >
+
+ <input
+  class="file-hidden"
+  type="file"
+  id="galleryInput"
+  accept="image/*"
+ >
+
+</div>
+
+
+<!-- SIZE -->
+
+<div class="group">
+
+ <div class="group-title">📐 Photo Size & DPI</div>
+
+ <select id="size">
+
+  <option value="35x45">
+   Passport — 35 × 45 mm
+  </option>
+
+  <option value="25x35">
+   ID / Small — 25 × 35 mm
+  </option>
+
+  <option value="30x40">
+   ID — 30 × 40 mm
+  </option>
+
+  <option value="2x2">
+   Visa — 2 × 2 inch
+  </option>
+
+  <option value="40x50">
+   Photo — 40 × 50 mm
+  </option>
+
+  <option value="custom">
+   Custom Size
+  </option>
+
+ </select>
+
+ <div class="grid2">
+
+  <div>
+   <label>Width (mm)</label>
+   <input id="customW" type="number" value="35">
+  </div>
+
+  <div>
+   <label>Height (mm)</label>
+   <input id="customH" type="number" value="45">
+  </div>
+
+ </div>
+
+ <label>Print Quality / DPI</label>
+
+ <select id="dpi">
+
+  <option value="150">150 DPI - Normal</option>
+  <option value="300" selected>300 DPI - Office Quality</option>
+  <option value="600">600 DPI - High Quality</option>
+
+ </select>
+
+</div>
+
+
+<!-- CROP -->
+
+<div class="group">
+
+ <div class="group-title">✂️ Crop & Position</div>
+
+ <div class="grid3">
+
+  <button class="btn" id="zoomOut">－ Zoom</button>
+  <button class="btn" id="zoomIn">＋ Zoom</button>
+  <button class="btn" id="fit">⛶ Fit</button>
+
+  <button class="btn" id="left">←</button>
+  <button class="btn" id="right">→</button>
+  <button class="btn" id="up">↑</button>
+
+  <button class="btn" id="down">↓</button>
+  <button class="btn" id="rotateL">↶ Rotate</button>
+  <button class="btn" id="rotateR">↷ Rotate</button>
+
+ </div>
+
+</div>
+
+
+<!-- BACKGROUND -->
+
+<div class="group">
+
+ <div class="group-title">🎨 Background</div>
+
+ <div class="color-row">
+
+  <div class="color"
+       style="background:#fff"
+       data-color="#ffffff"></div>
+
+  <div class="color"
+       style="background:#eaf4ff"
+       data-color="#eaf4ff"></div>
+
+  <div class="color"
+       style="background:#4da3ff"
+       data-color="#4da3ff"></div>
+
+  <div class="color"
+       style="background:#e53935"
+       data-color="#e53935"></div>
+
+  <div class="color"
+       style="background:#f2f2f2"
+       data-color="#f2f2f2"></div>
+
+  <input
+   class="custom-color"
+   type="color"
+   id="customColor"
+   value="#ffffff"
+  >
+
+ </div>
+
+ <label>Background Opacity</label>
+
+ <div class="range-line">
+
+  <input
+   type="range"
+   id="bgOpacity"
+   min="0"
+   max="100"
+   value="100"
+  >
+
+  <span class="value" id="bgOpacityVal">
+   100
+  </span>
+
+ </div>
+
+</div>
+
+
+<!-- EDIT -->
+
+<div class="group">
+
+ <div class="group-title">✨ Photo Adjustment</div>
+
+ <label>Brightness</label>
+
+ <div class="range-line">
+  <input
+   type="range"
+   id="brightness"
+   min="50"
+   max="150"
+   value="100"
+  >
+  <span class="value" id="brightnessVal">100</span>
+ </div>
+
+ <label>Contrast</label>
+
+ <div class="range-line">
+  <input
+   type="range"
+   id="contrast"
+   min="50"
+   max="150"
+   value="100"
+  >
+  <span class="value" id="contrastVal">100</span>
+ </div>
+
+ <label>Saturation</label>
+
+ <div class="range-line">
+  <input
+   type="range"
+   id="saturation"
+   min="0"
+   max="200"
+   value="100"
+  >
+  <span class="value" id="saturationVal">100</span>
+ </div>
+
+ <label>Sharpness</label>
+
+ <div class="range-line">
+  <input
+   type="range"
+   id="sharpness"
+   min="0"
+   max="100"
+   value="0"
+  >
+  <span class="value" id="sharpnessVal">0</span>
+ </div>
+
+</div>
+
+
+<!-- OFFICE -->
+
+<div class="group">
+
+ <div class="group-title">🏢 Office / Studio Text</div>
+
+ <label>Office Name</label>
+
+ <input
+  type="text"
+  id="officeName"
+  placeholder="JANA ONLINE SERVICE"
+ >
+
+ <div class="grid2">
+
+  <div>
+
+   <label>Text Size</label>
+
+   <input
+    type="number"
+    id="officeSize"
+    value="24"
+    min="8"
+    max="100"
+   >
+
+  </div>
+
+  <div>
+
+   <label>Text Position</label>
+
+   <select id="officePosition">
+
+    <option value="bottom">Bottom</option>
+    <option value="top">Top</option>
+    <option value="center">Center</option>
+
+   </select>
+
+  </div>
+
+ </div>
+
+ <div class="grid2">
+
+  <button class="btn" id="officeBold">
+   B Bold
+  </button>
+
+  <button class="btn" id="officeToggle">
+   👁 Show / Hide
+  </button>
+
+ </div>
+
+</div>
+
+
+<!-- BORDER -->
+
+<div class="group">
+
+ <div class="group-title">🖼️ Border</div>
+
+ <div class="grid2">
+
+  <select id="borderWidth">
+
+   <option value="0">No Border</option>
+   <option value="1">1 px</option>
+   <option value="2">2 px</option>
+   <option value="3">3 px</option>
+   <option value="5">5 px</option>
+
+  </select>
+
+  <input
+   type="color"
+   id="borderColor"
+   value="#000000"
+  >
+
+ </div>
+
+</div>
+
+
+<!-- PRINT SHEET -->
+
+<div class="group">
+
+ <div class="group-title">🖨️ Office Print Sheet</div>
+
+ <select id="paper">
+
+  <option value="4x6">
+   4 × 6 inch Photo Paper
+  </option>
+
+  <option value="a4">
+   A4 Paper
+  </option>
+
+ </select>
+
+ <label>Number of Copies</label>
+
+ <select id="copies">
+
+  <option>4</option>
+  <option>6</option>
+  <option>8</option>
+  <option selected>10</option>
+  <option>12</option>
+  <option>16</option>
+  <option>20</option>
+
+ </select>
+
+ <label>Sheet Margin</label>
+
+ <input
+  type="number"
+  id="margin"
+  value="35"
+  min="0"
+  max="200"
+ >
+
+ <button
+  class="primary"
+  id="makeSheet"
+  style="margin-top:8px;width:100%"
+ >
+  🖨️ Create Print Sheet
+ </button>
+
+</div>
+
+
+<!-- EXPORT -->
+
+<div class="group">
+
+ <div class="group-title">📥 Final Output</div>
+
+ <div class="grid2">
+
+  <button class="green" id="downloadJPG">
+   JPG Download
+  </button>
+
+  <button class="primary" id="downloadPNG">
+   PNG Download
+  </button>
+
+ </div>
+
+ <div class="grid2" style="margin-top:7px">
+
+  <button class="dark" id="print">
+   🖨️ Print
+  </button>
+
+  <button class="btn" id="reset">
+   🔄 Reset
+  </button>
+
+ </div>
+
+</div>
+
+</div>
+
+</aside>
+
+</div>
+
+
+<!-- SHEET -->
+
+<section class="card sheet" id="sheetSection">
+
+ <div class="title">
+  🖨️ Print Sheet Preview
+ </div>
+
+ <canvas id="sheetCanvas"></canvas>
+
+ <div class="grid2" style="margin-top:10px">
+
+  <button class="green" id="downloadSheet">
+   ⬇️ Download Sheet
+  </button>
+
+  <button class="primary" id="printSheet">
+   🖨️ Print Sheet
+  </button>
+
+ </div>
+
+</section>
+
+
+</div>
+
+<footer class="footer">
+ JANA ONLINE SERVICE • Professional Photo Studio Tool
+</footer>
+
+
+<script>
+
+const canvas=document.getElementById("photoCanvas");
+const ctx=canvas.getContext("2d");
+
+const sheetCanvas=document.getElementById("sheetCanvas");
+const sheetCtx=sheetCanvas.getContext("2d");
+
+let image=null;
+
+let zoom=1;
+let posX=0;
+let posY=0;
+let rotation=0;
+
+let bg="#ffffff";
+let bgOpacity=1;
+
+let brightness=100;
+let contrast=100;
+let saturation=100;
+let sharpness=0;
+
+let officeVisible=true;
+let officeBold=false;
+
+
+/* =========================
+   SOURCE
+========================= */
+
+cameraBtn.onclick=()=>{
+ cameraInput.click();
+};
+
+galleryBtn.onclick=()=>{
+ galleryInput.click();
+};
+
+cameraInput.onchange=e=>{
+ loadFile(e.target.files[0]);
+};
+
+galleryInput.onchange=e=>{
+ loadFile(e.target.files[0]);
+};
+
+
+function loadFile(file){
+
+ if(!file)return;
+
+ if(!file.type.startsWith("image/")){
+  alert("Please select an image.");
+  return;
+ }
+
+ const reader=new FileReader();
+
+ reader.onload=e=>{
+
+  const img=new Image();
+
+  img.onload=()=>{
+
+   image=img;
+
+   resetValues(false);
+
+   document.getElementById("status").innerHTML=
+   "✅ Photo loaded successfully. Drag the photo to adjust position.";
+
+   draw();
+
+  };
+
+  img.src=e.target.result;
+
+ };
+
+ reader.readAsDataURL(file);
+
+}
+
+
+/* =========================
+   SIZE
+========================= */
+
+function getMM(){
+
+ let v=document.getElementById("size").value;
+
+ if(v==="35x45")return [35,45];
+ if(v==="25x35")return [25,35];
+ if(v==="30x40")return [30,40];
+ if(v==="2x2")return [50.8,50.8];
+ if(v==="40x50")return [40,50];
+
+ return [
+  Number(customW.value)||35,
+  Number(customH.value)||45
+ ];
+
+}
+
+
+function mmToPx(mm,dpi){
+
+ return Math.round(
+  mm*dpi/25.4
+ );
+
+}
+
+
+function getCanvasSize(){
+
+ const [w,h]=getMM();
+
+ const dpi=Number(
+  document.getElementById("dpi").value
+ );
+
+ return [
+  mmToPx(w,dpi),
+  mmToPx(h,dpi)
+ ];
+
+}
+
+
+/* =========================
+   DRAW
+========================= */
+
+function draw(){
+
+ if(!image)return;
+
+ const [W,H]=getCanvasSize();
+
+ canvas.width=W;
+ canvas.height=H;
+
+ ctx.clearRect(0,0,W,H);
+
+ /* background */
+
+ ctx.save();
+
+ ctx.globalAlpha=bgOpacity;
+
+ ctx.fillStyle=bg;
+
+ ctx.fillRect(0,0,W,H);
+
+ ctx.restore();
+
+
+ /* image */
+
+ ctx.save();
+
+ ctx.translate(
+  W/2 + posX,
+  H/2 + posY
+ );
+
+ ctx.rotate(
+  rotation*Math.PI/180
+ );
+
+ const scale=Math.max(
+  W/image.width,
+  H/image.height
+ )*zoom;
+
+ const iw=image.width*scale;
+ const ih=image.height*scale;
+
+ ctx.filter=
+ `brightness(${brightness}%)
+  contrast(${contrast}%)
+  saturate(${saturation}%)`;
+
+ ctx.drawImage(
+  image,
+  -iw/2,
+  -ih/2,
+  iw,
+  ih
+ );
+
+ ctx.restore();
+
+ ctx.filter="none";
+
+
+ /* office text */
+
+ drawOfficeText(W,H);
+
+ /* border */
+
+ const bw=Number(
+  document.getElementById("borderWidth").value
+ );
+
+ if(bw>0){
+
+  ctx.strokeStyle=
+   document.getElementById("borderColor").value;
+
+  ctx.lineWidth=bw;
+
+  ctx.strokeRect(
+   bw/2,
+   bw/2,
+   W-bw,
+   H-bw
+  );
+
+ }
+
+}
+
+
+/* =========================
+   OFFICE TEXT
+========================= */
+
+function drawOfficeText(W,H){
+
+ if(!officeVisible)return;
+
+ const text=
+  document.getElementById("officeName").value.trim();
+
+ if(!text)return;
+
+ const size=
+  Number(document.getElementById("officeSize").value)||24;
+
+ const position=
+  document.getElementById("officePosition").value;
+
+ ctx.save();
+
+ ctx.fillStyle="#000";
+
+ ctx.font=
+  `${officeBold?"bold ":""}${size}px Arial`;
+
+ ctx.textAlign="center";
+
+ let y;
+
+ if(position==="top"){
+  y=size+8;
+ }
+
+ else if(position==="center"){
+  y=H/2;
+ }
+
+ else{
+  y=H-size/2-5;
+ }
+
+ ctx.fillText(
+  text,
+  W/2,
+  y
+ );
+
+ ctx.restore();
+
+}
+
+
+/* =========================
+   ZOOM
+========================= */
+
+zoomIn.onclick=()=>{
+ zoom=Math.min(zoom+.1,5);
+ draw();
+};
+
+zoomOut.onclick=()=>{
+ zoom=Math.max(zoom-.1,.5);
+ draw();
+};
+
+fit.onclick=()=>{
+ zoom=1;
+ posX=0;
+ posY=0;
+ draw();
+};
+
+
+/* =========================
+   MOVE
+========================= */
+
+function move(x,y){
+
+ posX+=x;
+ posY+=y;
+
+ draw();
+
+}
+
+left.onclick=()=>move(-10,0);
+right.onclick=()=>move(10,0);
+up.onclick=()=>move(0,-10);
+down.onclick=()=>move(0,10);
+
+
+/* =========================
+   ROTATE
+========================= */
+
+rotateL.onclick=()=>{
+ rotation-=90;
+ draw();
+};
+
+rotateR.onclick=()=>{
+ rotation+=90;
+ draw();
+};
+
+
+/* =========================
+   RANGE
+========================= */
+
+function range(id,valId,callback){
+
+ const el=document.getElementById(id);
+ const out=document.getElementById(valId);
+
+ el.oninput=()=>{
+
+  out.textContent=el.value;
+
+  callback(Number(el.value));
+
+  draw();
+
+ };
+
+}
+
+
+range(
+ "brightness",
+ "brightnessVal",
+ v=>brightness=v
+);
+
+range(
+ "contrast",
+ "contrastVal",
+ v=>contrast=v
+);
+
+range(
+ "saturation",
+ "saturationVal",
+ v=>saturation=v
+);
+
+range(
+ "sharpness",
+ "sharpnessVal",
+ v=>sharpness=v
+);
+
+range(
+ "bgOpacity",
+ "bgOpacityVal",
+ v=>bgOpacity=v/100
+);
+
+
+/* =========================
+   BACKGROUND
+========================= */
+
+document.querySelectorAll(".color")
+.forEach(el=>{
+
+ el.onclick=()=>{
+
+  bg=el.dataset.color;
+
+  draw();
+
+ };
+
+});
+
+customColor.oninput=e=>{
+
+ bg=e.target.value;
+
+ draw();
+
+};
+
+
+/* =========================
+   TEXT
+========================= */
+
+officeName.oninput=draw;
+officeSize.oninput=draw;
+officePosition.onchange=draw;
+
+officeBold.onclick=()=>{
+
+ officeBold=!officeBold;
+
+ officeBold.style.background=
+  officeBold?"#087f8c":"";
+
+ officeBold.style.color=
+  officeBold?"#fff":"";
+
+ draw();
+
+};
+
+officeToggle.onclick=()=>{
+
+ officeVisible=!officeVisible;
+
+ draw();
+
+};
+
+
+/* =========================
+   SIZE
+========================= */
+
+size.onchange=draw;
+customW.oninput=draw;
+customH.oninput=draw;
+dpi.onchange=draw;
+
+borderWidth.onchange=draw;
+borderColor.oninput=draw;
+
+
+/* =========================
+   DRAG
+========================= */
+
+let dragging=false;
+let sx=0;
+let sy=0;
+let startX=0;
+let startY=0;
+
+canvas.addEventListener(
+ "pointerdown",
+ e=>{
+
+  if(!image)return;
+
+  dragging=true;
+
+  sx=e.clientX;
+  sy=e.clientY;
+
+  startX=posX;
+  startY=posY;
+
+  canvas.setPointerCapture(
+   e.pointerId
+  );
+
+ }
+);
+
+
+canvas.addEventListener(
+ "pointermove",
+ e=>{
+
+  if(!dragging)return;
+
+  posX=startX+
+   (e.clientX-sx);
+
+  posY=startY+
+   (e.clientY-sy);
+
+  draw();
+
+ }
+);
+
+
+canvas.addEventListener(
+ "pointerup",
+ ()=>{
+  dragging=false;
+ }
+);
+
+canvas.addEventListener(
+ "pointercancel",
+ ()=>{
+  dragging=false;
+ }
+);
+
+
+/* =========================
+   DOWNLOAD
+========================= */
+
+function download(type){
+
+ if(!image){
+
+  alert("Please select a photo first.");
+  return;
+
+ }
+
+ draw();
+
+ const link=document.createElement("a");
+
+ link.download=
+  "JOS-Passport-Photo-"+Date.now()+
+  (type==="png"?".png":".jpg");
+
+ link.href=
+  canvas.toDataURL(
+   type==="png"
+    ?"image/png"
+    :"image/jpeg",
+   .96
+  );
+
+ link.click();
+
+}
+
+downloadJPG.onclick=()=>{
+ download("jpg");
+};
+
+downloadPNG.onclick=()=>{
+ download("png");
+};
+
+
+/* =========================
+   PRINT PHOTO
+========================= */
+
+print.onclick=()=>{
+
+ if(!image){
+
+  alert("Please select a photo first.");
+  return;
+
+ }
+
+ draw();
+
+ printCanvas(
+  canvas,
+  getMM()
+ );
+
+};
+
+
+/* =========================
+   CREATE PRINT SHEET
+========================= */
+
+makeSheet.onclick=()=>{
+
+ if(!image){
+
+  alert("Please select a photo first.");
+  return;
+
+ }
+
+ draw();
+
+ const paperValue=
+  document.getElementById("paper").value;
+
+ const copies=
+  Number(document.getElementById("copies").value);
+
+ const margin=
+  Number(document.getElementById("margin").value)||0;
+
+
+ /* 300 DPI paper */
+
+ let W,H;
+
+ if(paperValue==="4x6"){
+
+  W=1800;
+  H=1200;
+
+ }else{
+
+  W=2480;
+  H=3508;
+
+ }
+
+ sheetCanvas.width=W;
+ sheetCanvas.height=H;
+
+ sheetCtx.fillStyle="#fff";
+
+ sheetCtx.fillRect(
+  0,
+  0,
+  W,
+  H
+ );
+
+
+ const [mmW,mmH]=getMM();
+
+ const dpi=300;
+
+ const photoW=
+  mmToPx(mmW,dpi);
+
+ const photoH=
+  mmToPx(mmH,dpi);
+
+
+ let columns=
+  Math.floor(
+   (W-margin*2)/
+   (photoW+margin)
+  );
+
+ let rows=
+  Math.ceil(
+   copies/columns
+  );
+
+ let count=0;
+
+ for(
+  let r=0;
+  r<rows;
+  r++
+ ){
+
+  for(
+   let c=0;
+   c<columns;
+   c++
+  ){
+
+   if(count>=copies)break;
+
+   const x=
+    margin+
+    c*(photoW+margin);
+
+   const y=
+    margin+
+    r*(photoH+margin);
+
+   if(
+    x+photoW>W-margin ||
+    y+photoH>H-margin
+   )continue;
+
+   sheetCtx.drawImage(
+    canvas,
+    x,
+    y,
+    photoW,
+    photoH
+   );
+
+   count++;
+
+  }
+
+ }
+
+
+ document.getElementById(
+  "sheetSection"
+ ).style.display="block";
+
+ document.getElementById(
+  "sheetSection"
+ ).scrollIntoView({
+  behavior:"smooth"
+ });
+
+};
+
+
+/* =========================
+   SHEET DOWNLOAD
+========================= */
+
+downloadSheet.onclick=()=>{
+
+ const link=
+  document.createElement("a");
+
+ link.download=
+  "JOS-Print-Sheet.jpg";
+
+ link.href=
+  sheetCanvas.toDataURL(
+   "image/jpeg",
+   .96
+  );
+
+ link.click();
+
+};
+
+
+/* =========================
+   PRINT SHEET
+========================= */
+
+printSheet.onclick=()=>{
+
+ printCanvas(
+  sheetCanvas,
+  null,
+  true
+ );
+
+};
+
+
+/* =========================
+   PRINT ENGINE
+========================= */
+
+function printCanvas(
+ canvasElement,
+ mm,
+ sheet=false
+){
+
+ const img=
+  canvasElement.toDataURL(
+   "image/png"
+  );
+
+ const win=
+  window.open(
+   "",
+   "_blank"
+  );
+
+ if(!win){
+
+  alert(
+   "Popup blocked. Please allow popup."
+  );
+
+  return;
+
+ }
+
+ let style="";
+
+ if(sheet){
+
+  style=`
+   @page{
+    size:auto;
+    margin:0;
+   }
+
+   body{
+    margin:0;
+    text-align:center;
+   }
+
+   img{
+    width:100%;
+    height:auto;
+   }
+  `;
+
+ }else{
+
+  style=`
+   @page{
+    size:${mm[0]}mm ${mm[1]}mm;
+    margin:0;
+   }
+
+   body{
+    margin:0;
+    text-align:center;
+   }
+
+   img{
+    width:${mm[0]}mm;
+    height:${mm[1]}mm;
+    object-fit:cover;
+   }
+  `;
+
+ }
+
+ win.document.write(`
+ <!DOCTYPE html>
+ <html>
+ <head>
+ <title>JOS Photo Print</title>
+ <style>${style}</style>
+ </head>
+
+ <body>
+
+ <img src="${img}">
+
+ <script>
+
+ window.onload=function(){
+  window.print();
+ };
+
+ <\/script>
+
+ </body>
+ </html>
+ `);
+
+ win.document.close();
+
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+function resetValues(redraw=true){
+
+ zoom=1;
+ posX=0;
+ posY=0;
+ rotation=0;
+
+ brightness=100;
+ contrast=100;
+ saturation=100;
+ sharpness=0;
+
+ bg="#ffffff";
+ bgOpacity=1;
+
+ document.getElementById("brightness").value=100;
+ document.getElementById("contrast").value=100;
+ document.getElementById("saturation").value=100;
+ document.getElementById("sharpness").value=0;
+ document.getElementById("bgOpacity").value=100;
+
+ document.getElementById("brightnessVal").textContent=100;
+ document.getElementById("contrastVal").textContent=100;
+ document.getElementById("saturationVal").textContent=100;
+ document.getElementById("sharpnessVal").textContent=0;
+ document.getElementById("bgOpacityVal").textContent=100;
+
+ if(redraw)draw();
+
+}
+
+
+reset.onclick=()=>{
+
+ if(!image){
+
+  alert("No photo selected.");
+  return;
+
+ }
+
+ resetValues();
+
+ document.getElementById(
+  "officeName"
+ ).value="";
+
+ document.getElementById(
+  "status"
+ ).textContent=
+ "Settings reset successfully.";
+
+ draw();
+
+};
+
+
+/* =========================
+   INITIAL
+========================= */
+
+canvas.width=413;
+canvas.height=531;
+
+ctx.fillStyle="#fff";
+ctx.fillRect(
+ 0,0,
+ canvas.width,
+ canvas.height
+ );
+
+</script>
+
+</body>
+</html>
